@@ -1,0 +1,246 @@
+﻿@using PlacesFS.Models.Dtos;
+@model List<FavoritePlaceDto>
+
+<h2 style="text-align: center;padding:10px;">Lugares Favoritos</h2>
+<div class="row containerFavorites">
+	<div class="col-12">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Address</th>
+					<th>Rating</th>
+					<th>Category</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var place in Model)
+				{
+					<tr>
+						<td>@place.Name</td>
+						<td>@place.Address</td>
+						<td>@place.rating</td>
+						<td>@place.CategorysName</td>
+						<td>
+							<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal-@place.Id">
+								<i class="bi bi-eye-fill"></i>
+							</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		@foreach (var place in Model)
+		{
+			<div class="modal fade" id="myModal-@place.Id" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog  modal-dialog-scrollable" role="document">
+					<div class="modal-content">
+
+						@{
+							string badgeColor = "bg-secondary";
+							var FullImage = "~/images/default-image.avif";
+							var Images = place.ImagesSeparatedByPipes.Split("|").ToList();
+							var Tips = place.TipsSeparatedByPipes.Split("|").ToList();
+							if (Images.Count > 0)
+							{
+								FullImage = Images.FirstOrDefault();
+							}
+							var ratingValue = "No rating";
+
+							if (place.rating.HasValue)
+							{
+								ratingValue = place.rating.Value.ToString("0.0");
+								// Determina el color del badge según el valor de "rating"
+								if (place.rating >= 0.0 && place.rating < 4.0)
+								{
+									badgeColor = "bg-danger"; // Rojo
+								}
+								else if (place.rating >= 4.0 && place.rating < 5.0)
+								{
+									badgeColor = "bg-warning"; // Naranja
+								}
+								else if (place.rating >= 5.0 && place.rating < 6.0)
+								{
+									badgeColor = "bg-orange"; // Amarillo
+								}
+								else if (place.rating >= 6.0 && place.rating < 7.0)
+								{
+									badgeColor = "bg-yellow"; // Amarillo
+								}
+								else if (place.rating >= 7.0 && place.rating < 8.0)
+								{
+									badgeColor = "bg-success"; // Verde claro
+								}
+								else if (place.rating >= 8.0 && place.rating < 9.0)
+								{
+									badgeColor = "bg-success"; // Verde claro
+								}
+								else if (place.rating >= 9.0)
+								{
+									badgeColor = "bg-success"; // Verde claro
+								}
+							}
+						}
+						<div class="place-detail">
+							@if (Images.Count > 0)
+							{
+								<img src="@Images[0]" alt="@place.Name" class="main-image" />
+							}
+							else
+							{
+								<img src="images/NoImage.png" alt="No Image" class="main-image" />
+							}
+
+							@if (Images.Count > 1)
+							{
+								<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+									<div class="carousel-inner">
+										@{
+											int itemsPerSlide = 2; // Configura el número de elementos visibles
+											for (int i = 0; i < Images.Count; i += itemsPerSlide)
+											{
+												var active = "";
+												if (i == 0)
+												{
+													active = "active";
+												}
+												<div class="carousel-item @active">
+													<div class="row">
+														@for (int j = i; j < Math.Min(i + itemsPerSlide, Images.Count); j++)
+														{
+															<div class="col-6">
+																<img src="@Images[j]" class="d-block w-100 rounded-image" alt="Image" />
+															</div>
+														}
+													</div>
+												</div>
+											}
+										}
+									</div>
+									<button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+										<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+										<span class="visually-hidden">Previous</span>
+									</button>
+									<button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+										<span class="carousel-control-next-icon" aria-hidden="true"></span>
+										<span class="visually-hidden">Next</span>
+									</button>
+								</div>
+							}
+							<div style="padding: 20px;">
+								<div class="row">
+									<div class="col-12">
+										<h2>@place.Name</h2>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										@foreach (var item in @place.CategorysName.Split(","))
+										{
+											<span class="badge rounded-pill bg-secondary">@item</span>
+										}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<p>
+											<i class="bi-geo-alt fs-1" style="font-size: initial !important;color: #68c7d5;"></i> @place.Address
+										</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<span class="badge @badgeColor">
+											@ratingValue
+										</span>
+									</div>
+
+								</div>
+							</div>
+							@if (Tips.Count == 0)
+							{
+								<script>
+									$(function () {
+										toast.warning("No hay tips para el elemento seleccionado");
+									});
+								</script>
+							}
+							<ul class="tips-list" style="margin: 10px;padding-bottom: 40px;">
+								@foreach (var tip in Tips)
+								{
+									<li>
+										<div class="row">
+											<div class="col-12">
+												<i class="fas fa-lightbulb tip-icon"></i>
+												@tip
+											</div>
+
+										</div>
+
+										<hr class="hr hr-blurry" />
+									</li>
+								}
+							</ul>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+
+</div>
+<style>
+	.place-detail {
+		font-family: Arial, sans-serif;
+		max-width: 600px;
+		margin: 0 auto;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		overflow-y: auto;
+		height: 100%;
+	}
+
+	.main-image {
+		width: 100%;
+		border-bottom-left-radius: 50px;
+		border-bottom-right-radius: 50px;
+		box-shadow: 0 1px 2px rgb(134 160 179 / 30%), 0 1px 3px 1px rgb(233 212 212 / 15%);
+		border-bottom: 5px solid #7ecfc8;
+		border-top-left-radius: 0px;
+	}
+
+	.rounded-image {
+		border-radius: 10px;
+		border: 5px solid #7ac9c2;
+	}
+
+	.carousel-item {
+		text-align: center;
+		padding-left: 20px;
+		padding-bottom: 20px;
+		padding-right: 20px;
+	}
+
+	.carousel-control-prev,
+	.carousel-control-next {
+		width: 5%;
+	}
+
+	.tip-icon {
+		margin-right: 10px;
+	}
+
+
+
+	.no-data-message {
+		color: #999;
+		font-style: italic;
+	}
+
+	.carousel {
+		margin-top: -30px;
+	}
+</style>

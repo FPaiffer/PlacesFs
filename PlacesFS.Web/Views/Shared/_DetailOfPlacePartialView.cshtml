@@ -1,0 +1,237 @@
+﻿@using PlacesFS.Models.Dtos;
+@model FavoritePlaceDto;
+@{
+	string badgeColor = "bg-secondary";
+	var FullImage = "~/images/default-image.avif";
+	var Images = Model.ImagesSeparatedByPipes.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+	var Tips = Model.TipsSeparatedByPipes.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+	if (Images.Count > 0)
+	{
+		FullImage = Images.FirstOrDefault();
+	}
+	var ratingValue = "No rating";
+
+	if (Model.rating.HasValue)
+	{
+		ratingValue = Model.rating.Value.ToString("0.0");
+		// Determina el color del badge según el valor de "rating"
+		if (Model.rating >= 0.0 && Model.rating < 4.0)
+		{
+			badgeColor = "bg-danger"; // Rojo
+		}
+		else if (Model.rating >= 4.0 && Model.rating < 5.0)
+		{
+			badgeColor = "bg-warning"; // Naranja
+		}
+		else if (Model.rating >= 5.0 && Model.rating < 6.0)
+		{
+			badgeColor = "bg-orange"; // Amarillo
+		}
+		else if (Model.rating >= 6.0 && Model.rating < 7.0)
+		{
+			badgeColor = "bg-yellow"; // Amarillo
+		}
+		else if (Model.rating >= 7.0 && Model.rating < 8.0)
+		{
+			badgeColor = "bg-success"; // Verde claro
+		}
+		else if (Model.rating >= 8.0 && Model.rating < 9.0)
+		{
+			badgeColor = "bg-success"; // Verde claro
+		}
+		else if (Model.rating >= 9.0)
+		{
+			badgeColor = "bg-success"; // Verde claro
+		}
+	}
+}
+<div class="place-detail">
+	@if (Images.Count > 0)
+	{
+		<img src="@Images[0]" alt="@Model.Name" class="main-image" />
+	}
+	else
+	{
+		<img src="images/NoImage.png" alt="No Image" class="main-image" />
+	}
+	@if (Images.Count > 1)
+	{
+		<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+			<div class="carousel-inner">
+				@{
+					int itemsPerSlide = 2; // Configura el número de elementos visibles
+					for (int i = 0; i < Images.Count; i += itemsPerSlide)
+					{
+						var active = "";
+						if (i == 0)
+						{
+							active = "active";
+						}
+						<div class="carousel-item @active" data-bs-interval="2000">
+							<div class="row">
+								@for (int j = i; j < Math.Min(i + itemsPerSlide, Images.Count); j++)
+								{
+									<div class="col-6">
+										<img src="@Images[j]" class="d-block w-100 rounded-image" alt="Image" />
+									</div>
+								}
+							</div>
+						</div>
+					}
+				}
+			</div>
+			<button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
+	}
+	<div style="padding: 20px;">
+		<div class="row">
+			<div class="col-10">
+				<h2>@Model.Name</h2>
+			</div>
+			<div class="col-2">
+				<button class="btn btn-outline-warning favorite-button" onclick="location.href='@Url.Action("SaveFavorites", "Home",Model)'" " >
+					<i class="fas fa-star"></i>
+				</button>
+			</div>
+		</div>
+		<div class="row" style="padding-bottom: 10px;">
+			<div class="col-12">
+				@foreach (var item in @Model.CategorysName.Split(","))
+				{
+					<span class="badge rounded-pill bg-secondary">@item</span>
+				}
+			</div>
+			<br>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<p>
+					<i class="bi-geo-alt fs-1" style="font-size: initial !important;color: #68c7d5;"></i> @Model.Address
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<span class="badge @badgeColor">
+				@ratingValue
+				</span>
+			</div>
+		</div>
+	</div>
+				@if (Tips.Count == 0)
+				{
+		<script>
+			$(function () {
+				toast.warning("No hay tips para el elemento seleccionado");
+			});
+		</script>
+				}
+	<ul class="tips-list" style="margin: 10px;padding-bottom: 40px;">
+				@foreach (var tip in Tips)
+				{
+			<li>
+				<div class="row">
+					<div class="col-12">
+						<i class="fas fa-lightbulb tip-icon"></i>
+								@tip
+					</div>
+
+				</div>
+				<hr class="hr hr-blurry" />
+			</li>
+				}
+	</ul>
+</div>
+
+<style>
+	.place-detail {
+		font-family: Arial, sans-serif;
+		max-width: 600px;
+		margin: 0 auto;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		overflow-y: auto;
+		height: 100%;
+	}
+
+	.main-image {
+		width: 100%;
+		border-bottom-left-radius: 50px;
+		border-bottom-right-radius: 50px;
+		box-shadow: 0 1px 2px rgb(134 160 179 / 30%), 0 1px 3px 1px rgb(233 212 212 / 15%);
+		border-bottom: 5px solid #7ecfc8;
+		border-top-left-radius: 0px;
+	}
+
+	.rounded-image {
+		border-radius: 10px;
+		border: 5px solid #7ac9c2;
+	}
+
+	.carousel-item {
+		text-align: center;
+		padding-left: 20px;
+		padding-bottom: 20px;
+		padding-right: 20px;
+	}
+
+	.carousel-control-prev,
+	.carousel-control-next {
+		width: 5%;
+	}
+
+	.tip-icon {
+		margin-right: 10px;
+	}
+
+
+
+	.no-data-message {
+		color: #999;
+		font-style: italic;
+	}
+
+	.carousel {
+		margin-top: -30px;
+	}
+</style>
+
+<script>
+	$('#myCarousel').carousel({
+		interval: 2000,
+		cycle: true
+	});
+	window.addEventListener('load', checkAndShowMessage);
+	function checkAndShowMessage() {
+		// Obtén el elemento <ul> con la clase "tips-list"
+		var tipsList = document.querySelector('.tips-list');
+
+		// Verifica si el elemento <ul> no tiene elementos <li>
+		if (tipsList && tipsList.querySelectorAll('li').length === 0) {
+			// Si no hay elementos <li>, muestra un mensaje
+			showToast('No hay tips para el elemento seleccionado');
+		}
+	}
+
+	function SaveFavorite(model) {
+		$.ajax({
+			method: "POST",
+			url: "/Home/SaveFavorites",
+			data: model
+		})
+			.done(function (response) {
+				var data = response;
+				if (data) {
+					toast.info(`Agregado a favoritos ${model.name} correctamente!`);
+				}
+
+			});
+	}
+
+</script>

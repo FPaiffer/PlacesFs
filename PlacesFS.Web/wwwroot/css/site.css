@@ -1,0 +1,97 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+/*  margin-bottom: 60px;*/
+}
+
+.hasShadow {
+    box-shadow: 2px 0 5px rgba(0,0,0,.2);
+}
+.gradientBlue {
+    background-color: #80D0C7;
+    color: white;
+    background-image: linear-gradient(160deg, #80D0C7 0%, #1eacff 100%);
+}
+.gradientBlueInvert {
+    background-color: #1eacff;
+    background-image: linear-gradient(160deg, #1eacff 0%, #80D0C7 100%);
+}
+.nav-pills * {
+    color: white;
+}
+.footer {
+  /*  position: fixed;*/
+    z-index: 1000;
+}
+.rounded15 {
+    border-radius: 1.5rem;
+}
+/* Clase de color para LightMediumGrey (#C7CDCF) */
+.bg-light-medium-grey {
+    background-color: #C7CDCF;
+}
+
+/* Clase de color para Red (#E6092C) */
+.bg-red {
+    background-color: #E6092C;
+}
+
+/* Clase de color para DarkOrange (#FF6701) */
+.bg-dark-orange {
+    background-color: #FF6701;
+}
+
+/* Clase de color para Orange (#FF9600) */
+.bg-orange {
+    background-color: #FF9600;
+}
+
+/* Clase de color para Yellow (#FFC800) */
+.bg-yellow {
+    background-color: #FFC800;
+}
+
+/* Clase de color para LightGreen (#C5DE35) */
+.bg-light-green {
+    background-color: #C5DE35;
+}
+
+/* Clase de color para Green (#73CF42) */
+.bg-green {
+    background-color: #73CF42;
+}
+
+/* Clase de color para DarkGreen (#00B551) */
+.bg-dark-green {
+    background-color: #00B551;
+}
+
+.containerFavorites {
+    padding-left: 200px;
+    padding-right: 200px;
+}
+@media screen and (max-width: 576px) {
+    .containerFavorites {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+@media screen and (min-width: 576px) and (max-width: 1048px) {
+    .containerFavorites {
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+}

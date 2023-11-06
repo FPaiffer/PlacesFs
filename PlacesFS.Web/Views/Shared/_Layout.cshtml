@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - PlacesFS.Web</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/PlacesFS.Web.styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+	<link href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/toasty.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<body>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Sidebar izquierdo -->
+			@*   <div class="col-1 sidebar-left" id="sidebar-left">
+			<!-- Agrega aquí contenido para el sidebar izquierdo -->
+			</div> *@
+			<div id="sidebar-left" class="col-sm-auto sticky-top hasShadow gradientBlue">
+				<div class="d-flex flex-sm-column flex-row flex-nowrap align-items-center sticky-top">
+					<a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
+						<i class="bi-geo fs-1"></i>
+					</a>
+					<ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+						<li class="nav-item">
+							<a href="/" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Inicio">
+								<i class="bi-house fs-1"></i>
+							</a>
+						</li>
+						<li>
+							<a href="/Favorite" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Favoritos">
+								<i class="bi-star fs-1"></i>
+							</a>
+						</li>
+
+					</ul>
+
+				</div>
+			</div>
+
+			<!-- Contenido principal -->
+			<div class="col-sm content">
+				@RenderBody()
+
+			</div>
+		</div>
+
+		<!-- Botón para mostrar/ocultar el sidebar derecho -->
+		@* <div id="show-sidebar-right" onclick="toggleSidebarRight()">Mostrar Sidebar Derecho</div> *@
+
+		<!-- Sidebar derecho -->
+		<div class="sidebar-right hasShadow" id="sidebar-right">
+			<a href="#" onclick="CloseSidebar()" class="d-block p-3 link-blueColor text-decoration-none" style="
+    position: absolute;
+    z-index: 9999;
+">
+				<i class="bi-x-circle fs-1"></i>
+			</a>
+			<div id="SideBarRightContent" style="height: 100%;">
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div class="footer hasShadow gradientBlueInvert">
+		<div class="container" style="color: white;font-weight: bold;">
+			&copy; 2023 - PlacesFS
+		</div>
+	</div>
+
+
+
+	<style>
+		/* Estilo personalizado para el sidebar izquierdo */
+		/*         .sidebar-left {
+							position: fixed;
+							top: 0;
+							left: 0;
+							height: 100%;
+							width: 250px;
+							background-color: #f8f9fa;
+							overflow-y: auto;
+							z-index: 1;
+						} */
+
+		/* Estilo personalizado para el contenido principal */
+		.content {
+			/* 	margin-left: 250px; */ /* Ancho del sidebar izquierdo */
+			padding: 20px;
+		}
+
+		/* Estilo personalizado para el botón de mostrar/ocultar sidebar derecho */
+		#show-sidebar-right {
+			position: fixed;
+			top: 10px;
+			right: 10px;
+			z-index: 2; /* Colocado sobre el sidebar izquierdo */
+			background-color: #007bff;
+			color: #fff;
+			cursor: pointer;
+			padding: 10px;
+		}
+
+		/* Estilo personalizado para el sidebar derecho */
+		.sidebar-right {
+			position: fixed;
+			top: 0;
+			right: -400px;
+			height: 100%;
+			width: 400px;
+			background-color: #ffffff;
+			border-left: 5px solid #7ecfc8;
+		}
+
+		/* Estilo personalizado para el footer */
+		.footer {
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+			background-color: #343a40;
+			color: #fff;
+			text-align: center;
+			padding: 10px;
+		}
+
+		.SidebarHeight100 {
+			height: 100%;
+			position: fixed;
+		}
+
+		.SidebarRightTop60 {
+			top: 60px;
+		}
+
+		.link-blueColor{
+			color: #80D0C7 !important;
+		}
+
+		.link-blueColor:hover {
+				color: #1eacff !important;
+			}
+
+		.toast {
+			transition: 0.32s all ease-in-out;
+		}
+
+		.toast-container--fade {
+			right: 0;
+			bottom: 0;
+		}
+
+			.toast-container--fade .toast-wrapper {
+				display: inline-block;
+			}
+
+		.toast.fade-init {
+			opacity: 0;
+		}
+
+		.toast.fade-show {
+			opacity: 1!important;
+		}
+
+		.toast.fade-hide {
+			opacity: 0 !important;
+		}
+
+	</style>
+
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/toasty.js"></script>
+
+	@await RenderSectionAsync("Scripts", required: false)
+	<script>
+		var options = {
+			autoClose: true,
+			progressBar: true,
+			enableSounds: false,
+		};
+		var toast = new Toasty(options);
+		$(document).ready(function () {
+			toast.configure(options);
+		});
+
+		SetSizeSideBarLeft();
+		function toggleSidebarRight() {
+			var sidebarRight = document.getElementById("sidebar-right");
+
+			if (sidebarRight.style.right === "0px") {
+				sidebarRight.style.right = "-400px"; // Oculta el sidebar derecho
+				//		document.getElementById("show-sidebar-right").innerText = "Mostrar Sidebar Derecho";
+			} else {
+				sidebarRight.style.right = "0px"; // Muestra el sidebar derecho
+				//document.getElementById("show-sidebar-right").innerText = "Ocultar Sidebar Derecho";
+			}
+		}
+		window.addEventListener('resize', function (event) {
+			SetSizeSideBarLeft();
+		}, true);
+
+		function SetSizeSideBarLeft() {
+			if (window.innerWidth <= 576) {
+				document.getElementById("sidebar-left").classList.remove("SidebarHeight100");
+				document.getElementById("sidebar-right").classList.add("SidebarRightTop60");
+			}
+			else {
+				document.getElementById("sidebar-left").classList.add("SidebarHeight100");
+				document.getElementById("sidebar-right").classList.remove("SidebarRightTop60");
+			}
+		}
+		function CloseSidebar() {
+			toggleSidebarRight();
+			$(".boxSearch").show();
+		}
+		function showToast(message) {
+			// Crea un nuevo elemento de tostada
+			var toast = new bootstrap.Toast(document.getElementById('toast'));
+
+			// Establece el mensaje de la tostada
+			document.getElementById('toastMessage').innerText = message;
+
+			// Muestra la tostada
+			toast.show();
+		}
+	</script>
+</body>
+</html>
